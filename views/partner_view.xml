@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="res_partner_view_form_inh">
+            <field name="name">res.partner.view.form.inh</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.partner_view_buttons"/>
+<!--            <field name="priority" eval="10"/>-->
+<!--            <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>-->
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_partner_invoices']" position="before">
+                    <button type="object" class="oe_stat_button" icon="fa-list" name="action_view_partner_invoices">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value"><field name="total_due" widget='monetary' options="{'currency_field': 'currency_id'}"/></span>
+                            <span class="o_stat_text">Due</span>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
