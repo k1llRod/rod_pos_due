@@ -26,6 +26,22 @@ class ResPartner(models.Model):
     payment_responsible_id = fields.Many2one('res.users', ondelete='set null', string='Follow-up Responsible',
                                              help="Optionally you can assign a user to this field, which will make him responsible for the action.",
                                              tracking=True, copy=False, company_dependent=True)
+    followup_status = fields.Selection(
+        [('in_need_of_action', 'In need of action'), ('with_overdue_invoices', 'With overdue invoices'),
+         ('no_action_needed', 'No action needed')],
+        compute='_compute_for_followup',
+        string='Follow-up Status',
+        search='_search_status')
+    followup_level = fields.Many2one(
+        comodel_name='account_followup.followup.line',
+        compute="_compute_for_followup",
+        string="Follow-up Level",
+        search='_search_followup_level',
+    )
+    payment_responsible_id = fields.Many2one('res.users', ondelete='set null', string='Follow-up Responsible',
+                                             help="Optionally you can assign a user to this field, which will make him responsible for the action.",
+                                             tracking=True, copy=False, company_dependent=True)
+
 
     def _search_status(self, operator, value):
         """
@@ -40,7 +56,22 @@ class ResPartner(models.Model):
         return [('id', 'in', [d['partner_id'] for d in followup_data.values() if d['followup_status'] in value])]
 
     def _compute_for_followup(self):
-       self.total_due = 1
+       """
+          Compute the fields 'total_due', 'total_overdue','followup_level' and 'followup_status'
+       """
+       today = fields.Date.context_today(self)
+       for record in self:
+           total_due = 0
+           total_overdue = 0
+           for aml in record.unreconciled_aml_ids:
+               if aml.company_id == self.env.company and not aml.blocked:
+                   amount = aml.amount_residual
+                   total_due += amount
+                   is_overdue = today > aml.date_maturity if aml.date_maturity else today > aml.date
+                   if is_overdue:
+                       total_overdue += amount
+           record.total_due = total_due
+           record.total_overdue = total_overdue
 
     def _compute_unpaid_invoices(self):
         for record in self:
@@ -114,7 +145,7 @@ class ResPartner(models.Model):
             'name': _("Overdue Payments for %s", self.display_name),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
-            'views': [[self.env.ref('account_followup.customer_statements_form_view').id, 'form']],
+            'views': [[self.env.ref('rod_pos_due.customer_statements_form_view').id, 'form']],
             'res_model': 'res.partner',
             'res_id': self.id,
         }

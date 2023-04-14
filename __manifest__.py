@@ -12,6 +12,7 @@
     'depends': ['point_of_sale','account'],
     'data': [
         'views/partner_view.xml',
+        'views/account_followup_views.xml',
     ],
     'assets': {
         'point_of_sale.assets': [
