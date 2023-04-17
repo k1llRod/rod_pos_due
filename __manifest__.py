@@ -11,8 +11,12 @@
     'description': """""",
     'depends': ['point_of_sale','account'],
     'data': [
+        'security/account_followup_security.xml',
+        'security/ir.model.access.csv',
         'views/partner_view.xml',
         'views/account_followup_views.xml',
+        'data/account_followup_data.xml',
+        'data/cron.xml',
     ],
     'assets': {
         'point_of_sale.assets': [
@@ -22,5 +26,7 @@
         'web.assets_qweb': [
             'rod_pos_due/static/src/xml/**/*.xml',
         ],
+
+
     }
 }

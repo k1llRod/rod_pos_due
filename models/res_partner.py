@@ -59,6 +59,9 @@ class ResPartner(models.Model):
        """
           Compute the fields 'total_due', 'total_overdue','followup_level' and 'followup_status'
        """
+       first_followup_level = self.env['account_followup.followup.line'].search(
+           [('company_id', '=', self.env.company.id)], order="delay asc", limit=1)
+       followup_data = self._query_followup_level()
        today = fields.Date.context_today(self)
        for record in self:
            total_due = 0
@@ -72,6 +75,13 @@ class ResPartner(models.Model):
                        total_overdue += amount
            record.total_due = total_due
            record.total_overdue = total_overdue
+           if record.id in followup_data:
+               record.followup_status = followup_data[record.id]['followup_status']
+               record.followup_level = self.env['account_followup.followup.line'].browse(
+                   followup_data[record.id]['followup_level']) or first_followup_level
+           else:
+               record.followup_status = 'no_action_needed'
+               record.followup_level = first_followup_level
 
     def _compute_unpaid_invoices(self):
         for record in self:
@@ -141,14 +151,16 @@ class ResPartner(models.Model):
 
     def open_action_followup(self):
         self.ensure_one()
-        return {
-            'name': _("Overdue Payments for %s", self.display_name),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'views': [[self.env.ref('rod_pos_due.customer_statements_form_view').id, 'form']],
-            'res_model': 'res.partner',
-            'res_id': self.id,
-        }
+        '''
+           This function returns an action that displays the pos orders from partner.
+        '''
+        action = self.env['ir.actions.act_window']._for_xml_id('point_of_sale.action_pos_pos_form')
+        if self.is_company:
+            action['domain'] = [('partner_id.commercial_partner_id.id', '=', self.id)]
+        else:
+            action['domain'] = [('partner_id.id', '=', self.id)]
+
+        return action
 
     def send_followup_email(self):
         """
