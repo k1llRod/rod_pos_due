@@ -42,6 +42,20 @@ class ResPartner(models.Model):
                                              help="Optionally you can assign a user to this field, which will make him responsible for the action.",
                                              tracking=True, copy=False, company_dependent=True)
 
+    #Agregar productos prestados
+    def _compute_total_products_lent(self):
+        for order_pos in self:
+            products_qty = 0
+            pos_order_count = self.env['pos.order'].search([('partner_id', '=', order_pos.id)])
+            for order in pos_order_count:
+                for line in order.lines:
+                    if line.product_id.due_ok == True and line.price_subtotal == 0:
+                        products_qty = products_qty + line.qty
+            order_pos.total_products_lent = products_qty
+
+    total_products_lent = fields.Integer(string='Productos prestados', default=0, compute='_compute_total_products_lent')
+
+
 
     def _search_status(self, operator, value):
         """

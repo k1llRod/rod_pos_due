@@ -9,7 +9,7 @@
     'sequence': 6,
     'summary': "Settle custumer's due in the POS UI.",
     'description': """""",
-    'depends': ['point_of_sale','account'],
+    'depends': ['point_of_sale','account','product'],
     'data': [
         'security/account_followup_security.xml',
         'security/ir.model.access.csv',
@@ -17,6 +17,8 @@
         'views/account_followup_views.xml',
         'data/account_followup_data.xml',
         'data/cron.xml',
+        'views/product_template_views.xml',
+        'views/pos_order_view.xml',
     ],
     'assets': {
         'point_of_sale.assets': [

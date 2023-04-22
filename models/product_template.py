@@ -10,3 +10,4 @@ class ProductTemplate(models.Model):
 
     due_ok = fields.Boolean(string='Puede ser prestado', default=False)
 
+

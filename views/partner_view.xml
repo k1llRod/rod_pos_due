@@ -15,6 +15,12 @@
                             <span class="o_stat_text">Due</span>
                         </div>
                     </button>
+                    <button type="object" class="oe_stat_button" icon="fa-file-text-o" name="open_action_followup">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value"><field name="total_products_lent" options="{'currency_field': 'currency_id'}"/></span>
+                            <span class="o_stat_text">Productos prestados</span>
+                        </div>
+                    </button>
                 </xpath>
             </field>
         </record>

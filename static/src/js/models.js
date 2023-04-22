@@ -2,7 +2,46 @@ odoo.define('pos_settle_due.models', function (require) {
     'use strict';
 
     const models = require('point_of_sale.models');
+
     models.load_fields('res.partner', 'total_due');
+    console.log('FUNCIONA' + models);
+});
+
+odoo.define('rod_pos_due.models', function (require) {
+    'use strict';
+    const models = require('point_of_sale.models');
+    models.load_fields('res.partner', 'total_products_lent');
+    models.load_models([
+        {
+            model: 'pos.order',
+            label: 'load_pos_order',
+            condition: function(self){
+                return true;
+            },
+            fields: [],
+            domain: [],
+            loaded: function(self, result){
+              self.set({'pos_order': result});
+            },
+        }
+    ], {'after': 'res.partner'});
+    models.load_models([
+        {
+            model: 'pos.order.line',
+            label: 'load_pos_order_line',
+            condition: function(self){
+                return true;
+            },
+            fields: ['id','product_id','qty','price_unit'],
+            domain: function(){
+                return [];
+            },
+            loaded: function(self, result){
+              self.set({'pos_order_line': result});
+            },
+        }
+    ], {'after': 'res.partner'});
+
 });
 
 odoo.define('pos_settle_due.PaymentScreen', function (require) {

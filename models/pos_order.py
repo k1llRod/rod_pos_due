@@ -4,6 +4,17 @@ from odoo.exceptions import UserError
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
+    borrowed_products = fields.Integer(string='Productos prestados', default=0, compute='_compute_borrowed_products',store=True)
+    
+    @api.depends('lines')
+    def _compute_borrowed_products(self):
+        products_qty = 0
+        for order in self.lines:
+            if order.product_id.due_ok == True and order.price_subtotal == 0:
+                products_qty =+ order.qty
+        self.borrowed_products = products_qty
+
+
     @api.onchange('payment_ids', 'lines')
     def _onchange_amount_all(self):
         for order in self:
