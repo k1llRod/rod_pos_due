@@ -11,6 +11,8 @@ odoo.define('rod_pos_due.models', function (require) {
     'use strict';
     const models = require('point_of_sale.models');
     models.load_fields('res.partner', 'total_products_lent');
+    models.load_fields('product.product', 'due_ok');
+    var superOrderline = models.Orderline.prototype;
     models.load_models([
         {
             model: 'pos.order',
@@ -41,6 +43,14 @@ odoo.define('rod_pos_due.models', function (require) {
             },
         }
     ], {'after': 'res.partner'});
+    models.Orderline = models.Orderline.extend({
+        export_as_JSON: function () {
+            const json =  superOrderline.export_as_JSON.apply(this);
+            console.log("json ",json);
+            json.due_ok = this.product.due_ok;
+            return json;
+        }
+    });
 
 });
 

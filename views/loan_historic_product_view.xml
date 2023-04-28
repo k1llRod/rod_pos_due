@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+        <!-- Vista Árbol de Modelo Log de producto cero stock -->
+
+        <record model="ir.ui.view" id="register_loan_historic_tree">
+            <field name="name">loan.historic.product.tree</field>
+            <field name="model">loan.historic.product</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="product_id"/>
+                    <field name="date_process"/>
+                    <field name="qty"/>
+                    <field name="type_process"/>
+                    <field name="pos_order_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario  -->
+
+        <record model="ir.ui.view" id="register_loan_historic_form">
+            <field name="name">register.loan.historic.tree</field>
+            <field name="model">loan.historic.product</field>
+            <field name="arch" type="xml">
+                <form string="Historial de productos prestados" duplicate="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="product_id"/>
+                            </group>
+                            <group>
+                                <field name="date_process"/>
+                            </group>
+                            <group>
+                                <field name="qty" />
+                            </group>
+                            <group>
+                                <field name="type_process" />
+                            </group>
+                            <group>
+                                <field name="pos_order_id" />
+                            </group>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Accion para visualizar log de stock cero -->
+
+        <record id="action_loan_historic_product" model="ir.actions.act_window">
+            <field name="name">Historial de productos prestados</field>
+            <field name="res_model">loan.historic.product</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</odoo>

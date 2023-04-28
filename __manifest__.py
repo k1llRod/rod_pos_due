@@ -19,6 +19,7 @@
         'data/cron.xml',
         'views/product_template_views.xml',
         'views/pos_order_view.xml',
+        'views/loan_historic_product_view.xml',
     ],
     'assets': {
         'point_of_sale.assets': [

@@ -5,7 +5,7 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     borrowed_products = fields.Integer(string='Productos prestados', default=0, compute='_compute_borrowed_products',store=True)
-    
+    historic_product_ids = fields.One2many('loan.historic.product', 'pos_order_id', string='Historico de Productos')
     @api.depends('lines')
     def _compute_borrowed_products(self):
         products_qty = 0
@@ -13,6 +13,11 @@ class PosOrder(models.Model):
             if order.product_id.due_ok == True and order.price_subtotal == 0:
                 products_qty =+ order.qty
         self.borrowed_products = products_qty
+
+    def _create(self, data_list):
+        res = super(PosOrder, self)._create(data_list)
+        
+        return res
 
 
     @api.onchange('payment_ids', 'lines')
