@@ -52,6 +52,7 @@ odoo.define('rod_pos_due.models', function (require) {
         }
     });
 
+
 });
 
 odoo.define('pos_settle_due.PaymentScreen', function (require) {
